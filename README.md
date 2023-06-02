@@ -25,7 +25,3 @@ It contains the following:
 - output - the folder for the output .png files.
 
 Original script: Sirimon Thomas - sirimon.thomas@impact-initiatives.org
-
-
-test
-
