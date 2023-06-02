@@ -1,0 +1,157 @@
+state,county,location,label,X,Y
+CentralEquatoria,Juba,Juba Town,Juba Town,31.60869,4.83187
+CentralEquatoria,Juba,Juba PoC,Juba PoC 1 & 3,31.6095,4.7979
+CentralEquatoria,Juba,Mangala,Mangala,31.7737,5.1979
+CentralEquatoria,KajoKeji,Kajo Keji Town,Kajo Keji Town,31.66711,3.87822
+CentralEquatoria,KajoKeji,Leikor Centre,Leikor Centre,31.66866,3.8208
+CentralEquatoria,Lainya,Lainya Town,Lainya Town,31.09341,4.35609
+CentralEquatoria,Morobo,Morobo Town,Morobo Town,30.77536,3.68303
+CentralEquatoria,Terekeka,Terekeka Town,Terekeka Town,31.73122,5.42018
+CentralEquatoria,Yei,Yei Town,Yei Town,30.67651,4.09233
+EasternEquatoria,Budi,Chukudum,Chukudum,33.49754,4.23025
+EasternEquatoria,Ikotos,Ikotos Town,Ikotos Town,33.1088,4.07984
+EasternEquatoria,KapoetaEast,Narus,Narus,34.17118,4.50694
+EasternEquatoria,KapoetaEast,Katodori,Katodori,33.523,4.7115
+EasternEquatoria,KapoetaEast,Mogos,Mogos,33.77124,5.26748
+EasternEquatoria,KapoetaNorth,Riwoto,Riwoto,33.48876,4.90137
+EasternEquatoria,KapoetaSouth,Kapoeta Town,Kapoeta Town,33.59037,4.77314
+EasternEquatoria,Lafon,Longiro,Longiro,32.60274,4.86728
+EasternEquatoria,Lafon,Imehejek,Imehejek,32.76048,4.76025
+EasternEquatoria,Magwi,Magwi Town,Magwi Town,32.29848,4.12746
+EasternEquatoria,Magwi,Mugali,Mugali,32.17309,3.59502
+EasternEquatoria,Magwi,Nimule,Nimule,32.06025,3.59669
+EasternEquatoria,Torit,Torit Town,Torit Town,32.57213,4.41004
+Jonglei,Akobo,Akobo Town,Akobo Town,33.00276,7.78834
+Jonglei,Akobo,Walgak,Walgak,32.2439,8.1597
+Jonglei,Akobo,Dengjock,Dengjock,32.29319,8.17771
+Jonglei,Akobo,Nyandit,Nyandit,32.97517,7.62
+Jonglei,Ayod,Ayod Town,Ayod Town,31.41,8.13
+Jonglei,BorSouth,Bor Town,Bor Town,31.56106,6.21258
+Jonglei,BorSouth,Bor_PoC,Bor PoC,31.605605,6.188855
+Jonglei,CanalPigi,Diel,Diel,31.31008,9.3762615
+Jonglei,CanalPigi,Khorfulus,Khorfulus,31.59224,9.31189
+Jonglei,CanalPigi,Kurwai,Kurwai,31.15874,9.24504
+Jonglei,Duk,Puktap,Puktap,31.41277,7.45798
+Jonglei,Fangak,Juibor,Juibor,30.69636,9.38274
+Jonglei,Fangak,NewFangak,New Fangak,31.12631,9.40392
+Jonglei,Fangak,Fagwir,Fagwir,30.42447,9.54826
+Jonglei,Fangak,OldFangak,Old Fangak,30.88145,9.06758
+Jonglei,Nyirol,Lankien,Lankien,32.06165,8.5253
+Jonglei,Nyirol,Waat,Waat,32.15183,8.17896
+Jonglei,Pibor,Boma,Boma,34.39265,6.17951
+Jonglei,Pibor,Pibor Town,Pibor Town,33.12955,6.79993
+Jonglei,Pochalla,Pochala Town,Pochala Town,34.09657,7.18324
+Jonglei,TwicEast,Panyagor,Panyagor,31.41167,7.16833
+Jonglei,TwicEast,Wanglei,Wanglei,31.37979,7.08519
+Jonglei,TwicEast,Nyuak,Nyuak,31.4629,6.81074
+Jonglei,TwicEast,Kongor,Kongor,31.3553,7.1553
+Jonglei,TwicEast,Ajuong,Ajuong,31.35498,7.08216
+Jonglei,Uror,Karam,Karam,31.82351,8.20971
+Jonglei,Uror,Mwot Tot,Mwot Tot,32.05157,8.16562
+Jonglei,Uror,Pathai,Pathai,31.83561,8.07041
+Jonglei,Uror,Pieri,Pieri,32.02899,8.04082
+Jonglei,Uror,Pulchuol,Pulchuol,31.9605,8.1215
+Jonglei,Uror,Yuai,Yuai,31.88833,7.901
+Lakes,Awerial,Mingkaman,Mingkaman,31.51518,6.04999
+Lakes,Awerial,Kalthok,Kalthok,31.5722,5.8816
+Lakes,Cueibet,Cueibet Town,Cueibet Town,29.25083,7.01278
+Lakes,RumbekCentre,Rumbek Town,Rumbek Town,29.67695,6.80665
+Lakes,RumbekEast,Aduel,Aduel,29.89612,6.62357
+Lakes,RumbekEast,Akot,Akot,30.0391,6.54613
+Lakes,RumbekNorth,Maper,Maper,29.715,7.69972
+Lakes,Wulu,Wulu Town,Wulu Town,29.62722,6.5125
+Lakes,YirolEast,Nyang,Nyang,30.60821,6.71707
+Lakes,YirolWest,Yirol Town,Yirol Town,30.505,6.56139
+Lakes,YirolWest,Mit'nyin,Mit'nyin,30.49427,6.55233
+NorthernBahrelGhazal,AweilCentre,Aweil Town,Aweil Town,27.3935,8.77128
+NorthernBahrelGhazal,AweilEast,Malualkon,Malualkon,27.62747,9.02174
+NorthernBahrelGhazal,AweilEast,Wanyjok,Wanyjok,27.57143,9.01324
+NorthernBahrelGhazal,AweilEast,Warawar,Warawar,27.612,9.14427
+NorthernBahrelGhazal,AweilNorth,Ariath,Ariath,27.22127,9.10521
+NorthernBahrelGhazal,AweilNorth,Gok-Machar,Gok-Machar,26.85345,9.21668
+NorthernBahrelGhazal,AweilNorth,KiirAdem,Kiir Adem,26.83523,9.51198
+NorthernBahrelGhazal,AweilSouth,MalekAlel,Malek Alel,27.5961,8.58445
+NorthernBahrelGhazal,AweilSouth,Watmuok,Watmuok,27.6732,8.6946
+NorthernBahrelGhazal,AweilWest,Marial Baai,Marial Baai,26.8487,9.1014
+NorthernBahrelGhazal,AweilWest,Nyamlel Town,Nyamlel Town,26.97372,9.12763
+Unity,Abiemnhom,Abiemnhom Town,Abiemnhom Town,28.82092,9.39362
+Unity,Guit,Guit Town,Guit Town,29.91058,9.16387
+Unity,Koch,Koch Town,Koch Town,29.99361,8.59362
+Unity,Koch,Jaak,Jaak,29.73217,8.8236
+Unity,Leer,Leer Town,Leer Town,30.14577,8.29978
+Unity,Mayendit,Mayendit Town,Mayendit Town,30.0051,8.13297
+Unity,Mayom,Mayom Town,Mayom Town,29.16953,9.2269
+Unity,Panyijiar,Ganylel,Ganylel,30.476,7.39317
+Unity,Panyijiar,Nyal,Nyal,30.24686,7.72334
+Unity,Panyijiar,Panyijiar Town,Panyijiar Town,30.27623,7.46303
+Unity,Pariang,AjuongThok_RC,Ajuong Thok RC,30.27604,9.96076
+Unity,Pariang,Jamjang,Jamjang,30.2842,9.92915
+Unity,Pariang,Pamir_RC,Pamir RC,30.35073,9.92554
+Unity,Pariang,Pariang Town,Pariang Town,29.98137,9.91229
+Unity,Pariang,Yida_RC,Yida RC,30.10002,10.10134
+Unity,Rubkona,Bentiu,Bentiu,29.78961,9.24809
+Unity,Rubkona,Bentiu_PoC,Bentiu PoC,29.791402,9.333244
+Unity,Rubkona,Rubkona Town,Rubkona Town,29.79124,9.2889
+UpperNile,Baliet,Baliet Town,Baliet Town,32.08839,9.27982
+UpperNile,Fashoda,Aburoc,Aburoc,32.09322,10.12681
+UpperNile,Fashoda,Kodok,Kodok,32.11291,9.8857
+UpperNile,Fashoda,Lul,Lul,31.93929,9.76968
+UpperNile,Longochuk,Belwang,Belwang,33.34,9.1
+UpperNile,Longochuk,Janjok,Janjok,33.43,9.06
+UpperNile,Longochuk,Mathiang,Mathiang,33.5959,8.86213
+UpperNile,Longochuk,Udier,Udier,33.681,9.31217
+UpperNile,LuakpinyNasir,Jikmir,Jikmir,33.1922,8.4517
+UpperNile,LuakpinyNasir,Kurenge,Kurenge,33.07498,8.5617
+UpperNile,LuakpinyNasir,Mading,Mading,33.31918,8.77414
+UpperNile,LuakpinyNasir,Nasir Town,Nasir Town,33.06773,8.62085
+UpperNile,Maban,Bunj,Bunj,33.7521,9.9738
+UpperNile,Maban,Doro_RC,Doro RC,33.7505,9.8414
+UpperNile,Maban,Gendrassa_RC,Gendrassa RC,33.62157,9.99056
+UpperNile,Maban,Kaya_RC,Kaya RC,33.568,10.0824
+UpperNile,Maban,YusufBatil_RC,Yusuf Batil RC,33.5314,10.0189
+UpperNile,Maiwut,Jikou,Jikou,33.77517,8.38189
+UpperNile,Maiwut,Maiwut Town,Maiwut Town,33.92833,8.60833
+UpperNile,Maiwut,Pagak,Pagak,34.00598,8.51059
+UpperNile,Malakal,Malakal Town,Malakal Town,31.66261,9.52776
+UpperNile,Malakal,Malakal PoC,Malakal PoC,31.66261,9.52776
+UpperNile,Manyo,Kaka,Kaka,32.15275,10.57695
+UpperNile,Manyo,Wadakona,Wadakona,32.71921,11.59102
+UpperNile,Melut,Dingthoma,Dingthoma,32.33988,10.41204
+UpperNile,Melut,Melut Town,Melut Town,32.20069,10.43826
+UpperNile,Melut,Paloich,Paloich,32.5419,10.45709
+UpperNile,Panyikang,Tonga,Tonga,31.03968,9.47419
+UpperNile,Panyikang,Panyikang,Panyikang,31.45528,9.36398
+UpperNile,Renk,Renk Town,Renk Town,32.79775,11.74253
+UpperNile,Ulang,Dome,Dome,32.55168,8.86091
+UpperNile,Ulang,Nyangore,Nyangore,32.71949,8.65131
+UpperNile,Ulang,Ruplet,Ruplet,32.942,8.5666
+UpperNile,Ulang,Ulang Town,Ulang Town,32.71911,8.66222
+UpperNile,Ulang,Yomding,Yomding,32.85474,8.63325
+Warrap,GogrialEast,LietNhom,Liet-Nhom,28.47478,8.59628
+Warrap,GogrialEast,Luonyaker,Luonyaker,28.38678,8.23458
+Warrap,GogrialWest,Alek,Alek,28.58139,9.3525
+Warrap,GogrialWest,Gogrial Town,Gogrial Town,28.45596,9.67246
+Warrap,GogrialWest,Kuajok,Kuajok,27.97617,8.285
+Warrap,GogrialWest,Akon,Akon,27.96997,8.90033
+Warrap,TonjEast,Romich,Romich,29.2593,7.9697
+Warrap,TonjNorth,Warrap Town,Warrap Town,28.63807,8.08841
+Warrap,TonjSouth,Tonj Town,Tonj Town,28.68385,7.2844
+Warrap,Twic,Turalei,Turalei,28.42908,9.08843
+Warrap,Twic,Wunrok,Wunrok,28.30132,8.99341
+Warrap,AbyeiRegion,Abyei Town,Abyei Town,28.4374,9.5594
+Warrap,AbyeiRegion,Ameit,Ameit,28.45596,9.67246
+WesternBahrelGhazal,JurRiver,Mapel,Mapel,28.44403,7.2882
+WesternBahrelGhazal,Wau,Wau Town,Wau Town,27.9935,7.69834
+WesternBahrelGhazal,Raja,DeimZubier,Deim Zubier,26.19823,7.7167
+WesternBahrelGhazal,Raja,Raja Town,Raja Town,25.68095,8.46239
+WesternEquatoria,Ezo,Ezo Town,Ezo Town,27.47218,5.07061
+WesternEquatoria,Ibba,Ibba Town,Ibba Town,29.13834,4.78936
+WesternEquatoria,Maridi,Maridi Town,Maridi Town,29.47341,4.91286
+WesternEquatoria,MundriEast,Kediba,Kediba,30.7233,5.5261
+WesternEquatoria,MundriEast,Lui,Lui,30.46134,5.3375
+WesternEquatoria,MundriWest,Mundri Town,Mundri Town,30.32227,5.34873
+WesternEquatoria,Mvolo,Mvolo Town,Mvolo Town,29.95298,6.05949
+WesternEquatoria,Nagero,Nagero Town,Nagero Town,27.77138,6.39305
+WesternEquatoria,Nzara,Nzara Town,Nzara Town,28.25143,4.63881
+WesternEquatoria,Tambura,Tambura Town,Tambura Town,27.46939,5.60618
+WesternEquatoria,Yambio,Yambio Town,Yambio Town,28.41041,4.57097
