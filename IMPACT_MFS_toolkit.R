@@ -124,6 +124,8 @@ median_national <- jmmi%>%
 
 n_items <- ncol(median_national) - 3 #also used later in final pillar score calculations
 
+afford_scale <- 12 # set the max score for the affordability price levels - the scores will be scaled based on this value
+
 #calculate scores
 mfs_afford_price <- jmmi%>%
   select(state,county,location,contains('_price_unit_ssp'),-contains('wholesale')) %>%
@@ -131,8 +133,8 @@ mfs_afford_price <- jmmi%>%
   summarise(across(everything(), ~median(., na.rm = TRUE))) %>%
   ungroup() %>%
   mutate(across(contains('_price_unit_ssp'), price_score_fun), #apply function to score each item
-         afford_price_sum = rowSums(across(contains('_price_unit_ssp') | contains('_price_ind')), na.rm = T), # row sums to give total score - in SSD the range is -70 to 70 (2x35 items)
-         afford_price_score = ((afford_price_sum - (-2*n_items)) * (12-0)) / ((2*n_items) - (-2*n_items) + 0) # use scaling formula to scale values to 0-12 - optional
+         afford_price_sum = rowSums(across(contains('_price_unit_ssp') | contains('_price_ind')), na.rm = T), # row sums to give total score - +/- 2x number of items)
+         afford_price_score = ((afford_price_sum - (-2*n_items)) * (afford_scale-0)) / ((2*n_items) - (-2*n_items) + 0) # use scaling formula to scale values to 0-12 - optional
   ) %>% 
   select(state, county, location, afford_price_sum, afford_price_score)
 
@@ -168,49 +170,33 @@ mfs_afford_price_vol <- jmmi %>%
 #RE.1
 # For each vendor, subtract # restocking days from # days of remaining stock for each item or category; aggregate by taking the median of these vendor-level calculations
 
-#in SSD, there are 3 categories - local food (sorghum and maize), imported food (all other food) and non-food items. This should be changed to match your context. You can either use categories or each item individually, depending on the data you have available.
+# get names of items with stock data
+stock_items <- jmmi %>% 
+  select(ends_with('_stock_current') & -contains('wholesale')) %>% colnames() %>% str_replace_all('_stock_current','') %>% str_replace_all('_available','')
 
-mfs_resil_restock <- jmmi %>%
-  select(state, county, location, ends_with(c('_stock_current', '_duration')) & -contains('wholesale')) %>% #select stock and restock duration columns
-  mutate_if(is.logical, as.numeric) %>%
-  rowwise() %>%
-  mutate(
-    #stock calculations
-    local_food_stock_current = median(c(sorghum_grain_stock_current, maize_grain_stock_current), na.rm = T), #create median local cereal stock
-    import_food_stock_current = median(c(wheat_flour_stock_current,rice_stock_current,groundnuts_stock_current,beans_stock_current,sugar_stock_current,salt_stock_current,cooking_oil_stock_current), na.rm = T), #create imported food stock median
-    nfi_stock_current = median(c(soap_stock_current,jerrycan_stock_current,mosquito_net_stock_current,exercise_book_stock_current, #create median nfi stock
-                                 blanket_stock_current,cooking_pot_stock_current,plastic_sheet_stock_current,pen_available_stock_current,
-                                 pencil_available_stock_current,rubber_available_stock_current,sharpener_available_stock_current,rubber_rope_available_stock_current,
-                                 kanga_available_stock_current,solar_lamp_available_stock_current,plastic_bucket_available_stock_current,
-                                 sanitary_pads_available_stock_current), na.rm = T),
-    
-    #resilience days calculations
-    local_food_stock = local_food_stock_current - food_supplier_local_duration,
-    import_food_stock = import_food_stock_current - food_supplier_imported_duration,
-    nfi_stock = nfi_stock_current - nfi_supplier_duration,
-    
-    #resilience score calculations
-    local_food_stock = case_when(
-      local_food_stock > 3 ~ 3,
-      local_food_stock > 0 ~ 2,
-      local_food_stock == 0 ~ 1,
-      local_food_stock < 0 ~ 0),
-    import_food_stock = case_when(
-      import_food_stock > 3 ~ 3,
-      import_food_stock > 0 ~ 2,
-      import_food_stock == 0 ~ 1,
-      import_food_stock < 0 ~ 0),
-    nfi_stock = case_when(
-      nfi_stock > 3 ~ 3,
-      nfi_stock > 0 ~ 2,
-      nfi_stock == 0 ~ 1,
-      nfi_stock < 0 ~ 0)) %>%
-  ungroup() %>%
-  select(state, county, location, ends_with('_stock')) %>% #select relevant columns
+#create empty dataset
+mfs_resil_restock <- jmmi %>% select(state,county,location)
+
+#for loop for calculating restock days
+for (item in stock_items) {
+  #select the stock ('_stock_current) and restock duration ('_duration') columns for each item
+  item_stock <- jmmi %>% select(contains(paste0(item,'_')) & ends_with('_stock_current') & -contains('wholesale')) %>% select(1) #edit these parameters to ensure only 1 item is selected for each iteration
+  item_restock <- jmmi %>% select(contains(paste0(item,'_')) & ends_with('_duration') & -contains('wholesale')) %>% select(1) #edit these parameters to ensure only 1 item is selected for each iteration
+  item_resilience <- item_stock - item_restock #calculate resilience days
+  item_resilience <- ifelse(item_resilience > 3,3,
+                            ifelse(item_resilience > 0,2,
+                                   ifelse(item_resilience == 0,1,0))) #calculate scores
+  
+  colnames(item_resilience) <- paste0(item,'_restock_days')
+  
+  mfs_resil_restock <- cbind(mfs_resil_restock, item_resilience)
+}
+
+mfs_resil_restock <- mfs_resil_restock %>%
   group_by(state, county, location) %>% 
   summarise(across(everything(), ~median(., na.rm = TRUE))) %>% #aggregate by location
-  mutate(resil_restock_score = rowSums(across(ends_with('_stock')), na.rm = T))
-  
+  mutate(resil_restock_score = rowSums(across(ends_with('_restock_days')), na.rm = T))
+
 #RE.2
 #### see above
   
@@ -314,8 +300,8 @@ mfs <- mfs %>%
   #calculate pillar scores, scale to 0-1 by dividing by the max score for that pillar, then apply weights
   mutate(mfs_accessibility_pillar_score = (rowSums(across(contains('access_score'))) /17) *25,
          mfs_availability_pillar_score = (availability_score /(n_items*3)) *30,
-         mfs_affordability_pillar_score = (rowSums(across(contains('afford'))) /27) *15,
-         mfs_resilience_pillar_score = (rowSums(across(contains('resil'))) /30) *20,
+         mfs_affordability_pillar_score = (rowSums(across(contains('afford'))) /(afford_scale+15)) *15,
+         mfs_resilience_pillar_score = (rowSums(across(contains('resil'))) /(length(stock_items)*3)) *20,
          mfs_infrastructure_pillar_score = (rowSums(across(contains('infra'))) /10) *10,
          
          #calculate final score
