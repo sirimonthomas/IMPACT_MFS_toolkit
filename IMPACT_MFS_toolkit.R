@@ -1,4 +1,4 @@
-## IMPACT MFS maps
+## IMPACT Market Functionality Score (MFS)
 ## Author: Sirimon Thomas - sirimon.thomas@impact-initiatives.org
 ## Date: 01/05/2023
 
@@ -7,10 +7,15 @@ library(here)
 rm(list=ls())
 
 
-#####
-#import clean jmmi data
-jmmi <- read.csv('input/JMMI_data.csv', na.strings = '')
+#import clean data
+data <- read.csv('input/JMMI_data_SSD.csv', na.strings = '')
 
+###### USER INPUT - change the lines below to match the administrative levels in the country of interest
+###################################################
+data <- data %>% rename('adm1' = 'state',
+                        'adm2' = 'county',
+                        'adm3' = 'location')
+###################################################
 
 #### ACCESSIBILITY #### -----------------------------------------
 
@@ -18,13 +23,13 @@ jmmi <- read.csv('input/JMMI_data.csv', na.strings = '')
 #calculate '% of vendors selecting an option other than "Hazardous, damaged, or unsafe buildings in the marketplace," 
 #"Hazards or damage on roads leading to the marketplace," "No issues," "Don't know," or "Prefer not to answer"'
 
-mfs_access_physical <- jmmi %>%
+mfs_access_physical <- data %>%
   mutate(physical_access_true = if_else(rowSums(select(.,contains('accessibility_physical.') 
                                                        & -contains('no_issues') 
                                                        & -contains('dont_know')
                                                        & -contains('hazardous_buildings')
                                                        & -contains('hazardous_roads'))) > 0,1,0)) %>% 
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(physical_access = round(sum(physical_access_true)/n()*100,1)) %>%
   mutate(physical_access_score = case_when(physical_access<5 ~ 8,
                                            physical_access>=5 & physical_access<10 ~ 6,
@@ -35,8 +40,8 @@ mfs_access_physical <- jmmi %>%
 #AC.2
 #calculate '% of vendors selecting "Hazards or damage on roads leading to the marketplace"'
 
-mfs_access_roads <- jmmi %>% 
-  group_by(state,county,location) %>%
+mfs_access_roads <- data %>% 
+  group_by(adm1,adm2,adm3) %>%
   summarise(physical_roads_access = round(sum(accessibility_physical.hazardous_roads)/n()*100,1)) %>%
   mutate(physical_roads_access_score = case_when(physical_roads_access<5 ~ 4,
                                                  physical_roads_access>=5 & physical_roads_access<10 ~ 3,
@@ -47,19 +52,19 @@ mfs_access_roads <- jmmi %>%
 #AC.3
 #if any vendor responds "Yes," the market is coded as a "Yes"
 
-mfs_access_social <- jmmi %>%
+mfs_access_social <- data %>%
   mutate(accessibility_social_access = if_else(accessibility_social_access == 'yes',1,0)) %>%
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(social_access_score = if_else(sum(accessibility_social_access)>0,0,2))
 
 #AC.4
 #calculate % of vendors selecting an option other than "No issues" or "Prefer not to answer"
 
-mfs_access_safety <- jmmi %>% 
+mfs_access_safety <- data %>% 
   mutate(safety_access_true = if_else(rowSums(select(.,contains('accessibility_safety.') 
                                                      & -contains('no_issues') 
                                                      & -contains('dont_know'))) > 0,1,0)) %>%
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(safety_access = round(sum(safety_access_true)/n()*100,1)) %>%
   mutate(safety_access_score = case_when(safety_access<5 ~ 3,
                                          safety_access>=5 & safety_access<10 ~ 2,
@@ -72,7 +77,7 @@ mfs_access_safety <- jmmi %>%
 #AV.1
 #Mode of vendor responses for each item
 
-# function to take most common answer (statistical mode). This favours available over limited over unavailable i.e. if one trader says 'available' and one says 'limited', the location will be given 'available'
+# function to take most common answer (statistical mode). This favours available over limited over unavailable i.e. if one trader says 'available' and one says 'limited', the adm3 will be given 'available'
 mode_fun <- function(x) {
   #remove NAs and sort alphabetically - this priotises available over limited over unavailable
   x <- x[!is.na(x)] %>% sort()
@@ -81,9 +86,9 @@ mode_fun <- function(x) {
   ux[which.max(tabulate(match(x, ux)))]
 }
 
-mfs_available <- jmmi %>%
-  select(state, county, location, ends_with('_available') & !contains(c('summary','wholesale','usd_available','ssp_available','sdg_available','etb_available','ugx_available','kes_available','cdf_available','xaf_available'))) %>% #NB excludes currencies
-  group_by(state, county, location) %>%
+mfs_available <- data %>%
+  select(adm1, adm2, adm3, ends_with('_available') & !contains(c('summary','wholesale','usd_available','ssp_available','sdg_available','etb_available','ugx_available','kes_available','cdf_available','xaf_available'))) %>% #NB excludes currencies
+  group_by(adm1, adm2, adm3) %>%
   summarise(across(ends_with('_available'), mode_fun)) %>% #use mode_fun to extract mode value
   mutate(across(ends_with('_available'), ~ case_when( #convert to scores
     . == 'available' ~ 3,
@@ -91,7 +96,7 @@ mfs_available <- jmmi %>%
     . == 'unavailable' ~ 0))) %>%
   ungroup() %>%
   mutate(availability_score = rowSums(across(ends_with('_available')), na.rm = T)) %>%#sum rows to give overall score - max score is 105 (35 items x 3)
-  select(state, county, location, availability_score)
+  select(adm1, adm2, adm3, availability_score)
 
 
 #### AFORDABILITY #### -------------------------------------
@@ -116,36 +121,36 @@ price_score_fun <- function(item_median){
 }
 
 #create national median dataset
-median_national <- jmmi%>%
-  select(state,county,location,contains('_price_unit_ssp'),-contains('wholesale')) %>% # NB does not include currency prices
-  lapply(median, na.rm=T) %>% #ignore warning messages- these are from trying to calculate the median on the state, county and location columns
+median_national <- data%>%
+  select(adm1,adm2,adm3,contains('_price_unit_ssp'),-contains('wholesale')) %>% # NB does not include currency prices
+  lapply(median, na.rm=T) %>% #ignore warning messages- these are from trying to calculate the median on the adm1, adm2 and adm3 columns
   as.data.frame() %>%
-  mutate(across(c(state, county, location), as.character))
+  mutate(across(c(adm1, adm2, adm3), as.character))
 
 n_items <- ncol(median_national) - 3 #also used later in final pillar score calculations
 
 afford_scale <- 12 # set the max score for the affordability price levels - the scores will be scaled based on this value
 
 #calculate scores
-mfs_afford_price <- jmmi%>%
-  select(state,county,location,contains('_price_unit_ssp'),-contains('wholesale')) %>%
-  group_by(state, county, location)%>% 
+mfs_afford_price <- data%>%
+  select(adm1,adm2,adm3,contains('_price_unit_ssp'),-contains('wholesale')) %>%
+  group_by(adm1, adm2, adm3)%>% 
   summarise(across(everything(), ~median(., na.rm = TRUE))) %>%
   ungroup() %>%
   mutate(across(contains('_price_unit_ssp'), price_score_fun), #apply function to score each item
          afford_price_sum = rowSums(across(contains('_price_unit_ssp') | contains('_price_ind')), na.rm = T), # row sums to give total score - +/- 2x number of items)
          afford_price_score = ((afford_price_sum - (-2*n_items)) * (afford_scale-0)) / ((2*n_items) - (-2*n_items) + 0) # use scaling formula to scale values to 0-12 - optional
   ) %>% 
-  select(state, county, location, afford_price_sum, afford_price_score)
+  select(adm1, adm2, adm3, afford_price_sum, afford_price_score)
 
 #AF.2
 #% of vendors selecting an option other than "No issues," "Don't know," or "Prefer not to answer"
 
-mfs_afford_finance <- jmmi %>% 
+mfs_afford_finance <- data %>% 
   mutate(afford_finance_true = if_else(rowSums(select(.,contains('affordability_financial.') 
                                                      & -contains('no_issues') 
                                                      & -contains('dont_know'))) > 0,1,0)) %>%
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(afford_finance = round(sum(afford_finance_true)/n()*100,1)) %>%
   mutate(afford_finance_score = case_when(afford_finance<10 ~ 9,
                                           afford_finance>=10 & afford_finance<25 ~ 6,
@@ -155,9 +160,9 @@ mfs_afford_finance <- jmmi %>%
 #AF.3
 #% of vendors selecting "Yes"
 
-mfs_afford_price_vol <- jmmi %>% 
+mfs_afford_price_vol <- data %>% 
   mutate(affordability_price_volatility = if_else(affordability_price_volatility == 'yes',1,0)) %>%
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(afford_price_vol = round(sum(affordability_price_volatility)/n()*100,1)) %>%
   mutate(afford_price_vol_score = case_when(afford_price_vol<10 ~ 6,
                                             afford_price_vol>=10 & afford_price_vol<25 ~ 4,
@@ -171,17 +176,17 @@ mfs_afford_price_vol <- jmmi %>%
 # For each vendor, subtract # restocking days from # days of remaining stock for each item or category; aggregate by taking the median of these vendor-level calculations
 
 # get names of items with stock data
-stock_items <- jmmi %>% 
+stock_items <- data %>% 
   select(ends_with('_stock_current') & -contains('wholesale')) %>% colnames() %>% str_replace_all('_stock_current','') %>% str_replace_all('_available','')
 
 #create empty dataset
-mfs_resil_restock <- jmmi %>% select(state,county,location)
+mfs_resil_restock <- data %>% select(adm1,adm2,adm3)
 
 #for loop for calculating restock days
 for (item in stock_items) {
   #select the stock ('_stock_current) and restock duration ('_duration') columns for each item
-  item_stock <- jmmi %>% select(contains(paste0(item,'_')) & ends_with('_stock_current') & -contains('wholesale')) %>% select(1) #edit these parameters to ensure only 1 item is selected for each iteration
-  item_restock <- jmmi %>% select(contains(paste0(item,'_')) & ends_with('_duration') & -contains('wholesale')) %>% select(1) #edit these parameters to ensure only 1 item is selected for each iteration
+  item_stock <- data %>% select(contains(paste0(item,'_')) & ends_with('_stock_current') & -contains('wholesale')) %>% select(1) #edit these parameters to ensure only 1 item is selected for each iteration
+  item_restock <- data %>% select(contains(paste0(item,'_')) & ends_with('_duration') & -contains('wholesale')) %>% select(1) #edit these parameters to ensure only 1 item is selected for each iteration
   item_resilience <- item_stock - item_restock #calculate resilience days
   item_resilience <- ifelse(item_resilience > 3,3,
                             ifelse(item_resilience > 0,2,
@@ -193,9 +198,10 @@ for (item in stock_items) {
 }
 
 mfs_resil_restock <- mfs_resil_restock %>%
-  group_by(state, county, location) %>% 
-  summarise(across(everything(), ~median(., na.rm = TRUE))) %>% #aggregate by location
-  mutate(resil_restock_score = rowSums(across(ends_with('_restock_days')), na.rm = T))
+  group_by(adm1, adm2, adm3) %>% 
+  summarise(across(everything(), ~median(., na.rm = TRUE))) %>% #aggregate by adm3
+  mutate(resil_restock_score = rowSums(across(ends_with('_restock_days')), na.rm = T)) %>%
+  select(adm1,adm2,adm3,resil_restock_score)
 
 #RE.2
 #### see above
@@ -203,10 +209,10 @@ mfs_resil_restock <- mfs_resil_restock %>%
 #RE.3
 #% of vendors selecting "Yes"
 
-mfs_resil_supply_diverse <- jmmi %>% 
-  select(state, county, location, ends_with('_single')) %>%
+mfs_resil_supply_diverse <- data %>% 
+  select(adm1, adm2, adm3, ends_with('_single')) %>%
   mutate(across(ends_with('_single'), ~if_else(. == 'yes',1,0))) %>%
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(across(ends_with('_single'), ~round(sum(., na.rm=T)/sum(!is.na(.))*100,1))) %>%
   ungroup() %>%
   mutate(food_supplier_local_single = case_when(food_supplier_local_single > 75 ~ 0,
@@ -227,11 +233,11 @@ mfs_resil_supply_diverse <- jmmi %>%
 #RE.4
 #% of vendors selecting an option other than "No difficulties" or "Prefer not to answer"
 
-mfs_resil_supply <- jmmi %>% 
+mfs_resil_supply <- data %>% 
   mutate(resilience_supply_true = if_else(rowSums(select(.,contains('resilience_supply_chain.') 
                                                       & -contains('no_difficulties') 
                                                       & -contains('dont_know'))) > 0,1,0)) %>%
-  group_by(state,county,location) %>%
+  group_by(adm1,adm2,adm3) %>%
   summarise(resil_supply = round(sum(resilience_supply_true)/n()*100,1)) %>%
   mutate(resil_supply_score = case_when(resil_supply<5 ~ 12,
                                         resil_supply>=5 & resil_supply<10 ~ 9,
@@ -244,8 +250,8 @@ mfs_resil_supply <- jmmi %>%
 #IN.1
 #% of vendors selecting "Hazardous, damaged, or unsafe buildings in the marketplace"
 
-mfs_infra_facilities <- jmmi %>% 
-  group_by(state, county, location) %>%
+mfs_infra_facilities <- data %>% 
+  group_by(adm1, adm2, adm3) %>%
   summarise(infra_facilities = round(sum(accessibility_physical.hazardous_buildings)/n()*100,1)) %>%
   mutate(infra_facilities_score = case_when(infra_facilities<5 ~ 4,
                                             infra_facilities>=5 & infra_facilities<10 ~ 3,
@@ -256,12 +262,12 @@ mfs_infra_facilities <- jmmi %>%
 #IN.2
 #% of vendors selecting an option other than "Yes, within my own business facilities" or "Yes, elsewhere within the marketplace"
 
-mfs_infra_storage <- jmmi %>% 
+mfs_infra_storage <- data %>% 
   mutate(infrastructure_storage = if_else(infrastructure_storage == 'no_store_facility_outside' |
                                             infrastructure_storage == 'no_store_at_home' |
                                             infrastructure_storage == 'other' |
                                             infrastructure_storage == 'prefer_not_answer', 1,0)) %>%
-  group_by(state, county, location) %>%
+  group_by(adm1, adm2, adm3) %>%
   summarise(infra_storage = round(sum(infrastructure_storage)/n()*100,1)) %>%
   mutate(infra_storage_score = case_when(infra_storage<10 ~ 3,
                                          infra_storage>=10 & infra_storage<25 ~ 2,
@@ -271,11 +277,11 @@ mfs_infra_storage <- jmmi %>%
 #IN.3
 #% of vendors selecting an option other than "Cash (local currency)", "Cash (foreign currencies)", or "Prefer not to answer"
 
-mfs_infra_payment <- jmmi %>% 
+mfs_infra_payment <- data %>% 
   mutate(infra_payment_true = if_else(rowSums(select(.,contains('modalities_which.') 
                                                          & -contains('cash') 
                                                          & -contains('dont_know'))) > 0,1,0)) %>%
-  group_by(state, county, location) %>%
+  group_by(adm1, adm2, adm3) %>%
   summarise(infra_payment = round(sum(infra_payment_true, na.rm = T)/n()*100,1)) %>%
   mutate(infra_payment_score = case_when(infra_payment>75 ~ 3,
                                          infra_payment>50 ~ 2,
@@ -292,11 +298,11 @@ mfs_data_list <- list(mfs_access_physical,mfs_access_roads,mfs_access_social,mfs
                       mfs_infra_facilities,mfs_infra_storage,mfs_infra_payment)                 #infrastructure pillar - max 10
 
 #create full dataset
-mfs <- mfs_data_list %>% reduce(full_join, by=c('state','county','location'))
+mfs <- mfs_data_list %>% reduce(full_join, by=c('adm1','adm2','adm3'))
 
 #calculate final mfs
 mfs <- mfs %>%
-  select(state, county, location, contains('_score'))%>%
+  select(adm1, adm2, adm3, contains('_score'))%>%
   #calculate pillar scores, scale to 0-1 by dividing by the max score for that pillar, then apply weights
   mutate(mfs_accessibility_pillar_score = (rowSums(across(contains('access_score'))) /17) *25,
          mfs_availability_pillar_score = (availability_score /(n_items*3)) *30,
@@ -306,12 +312,12 @@ mfs <- mfs %>%
          
          #calculate final score
          mfs_score = rowSums(across(contains('_pillar_score')))) %>%
-  select(state, county, location, contains(c('_pillar_score', 'mfs_score')))
+  select(adm1, adm2, adm3, contains(c('_pillar_score', 'mfs_score')))
 
 #export
 
 write.csv(mfs,
-          file = 'output/mfs_ssd.csv',
+          file = 'output/mfs.csv',
           row.names = F)
 
 
